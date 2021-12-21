@@ -1,0 +1,12 @@
+<h2>Page A</h2>
+<p>
+  <app-child-page-a></app-child-page-a>
+</p>
+<ng-container *ngIf="!loading; else loadingTemplate">
+  <p *ngFor="let item of items">
+    {{ item }}
+  </p>
+</ng-container>
+<ng-template #loadingTemplate>
+  <p><strong>Loading....</strong></p>
+</ng-template>

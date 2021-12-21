@@ -1,0 +1,5 @@
+<div class="nav">
+  <a class="nav__item" *ngFor="let link of links" [routerLink]="link" routerLinkActive="nav__item--active">{{ link
+    }}</a>
+</div>
+<router-outlet></router-outlet>

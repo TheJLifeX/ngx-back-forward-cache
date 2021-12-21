@@ -11,6 +11,12 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
+    "paths": {
+      "ngx-back-forward-cache": [
+        "dist/ngx-back-forward-cache/ngx-back-forward-cache",
+        "dist/ngx-back-forward-cache"
+      ]
+    },
     "declaration": false,
     "downlevelIteration": true,
     "experimentalDecorators": true,
