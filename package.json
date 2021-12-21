@@ -4,7 +4,7 @@
   "scripts": {
     "dev--ngx-back-forward-cache": "ng build ngx-back-forward-cache --watch",
     "dev--demo-app": "ng serve demo-app",
-    "publish--ngx-back-forward-cache": "ng build ngx-back-forward-cache --configuration='production' && cd dist/ngx-back-forward-cache && npm publish"
+    "publish--ngx-back-forward-cache": "ng build ngx-back-forward-cache --configuration=production && cd dist/ngx-back-forward-cache && npm publish"
   },
   "private": true,
   "dependencies": {
