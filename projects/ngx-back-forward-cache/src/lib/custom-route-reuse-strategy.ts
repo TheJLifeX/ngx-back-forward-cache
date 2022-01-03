@@ -30,6 +30,10 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
     this.storedRouteHandles = new MemoryCacheMap(
       {
         timeToLive: config.timeToLive!
+        /**
+          * @todo: A way to destroy the component (by calling destroyDetachedRouteHandle) after the "time to live" is needed here.
+          * PS: Keep in mind that reattached components schould not be destroyed.
+         */
       }
     );
 
