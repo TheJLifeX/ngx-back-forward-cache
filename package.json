@@ -4,7 +4,8 @@
   "scripts": {
     "dev--ngx-back-forward-cache": "ng build ngx-back-forward-cache --watch",
     "dev--demo-app": "ng serve demo-app",
-    "publish--ngx-back-forward-cache": "ng build ngx-back-forward-cache --configuration=production && cd dist/ngx-back-forward-cache && npm publish"
+    "build": "powershell rm ./dist/* -Recurse && ng build ngx-back-forward-cache --configuration=production && powershell cp ./LICENSE,./README.md ./dist/ngx-back-forward-cache/",
+    "publish-library": "npm run build && npm publish ./dist/ngx-back-forward-cache/ && powershell rm ./dist/* -Recurse"
   },
   "private": true,
   "dependencies": {
