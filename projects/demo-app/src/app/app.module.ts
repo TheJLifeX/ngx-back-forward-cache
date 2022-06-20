@@ -12,7 +12,9 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgxBackForwardCacheModule.forRoot()
+    NgxBackForwardCacheModule.forRoot({
+      disableNgxBackForwardCache: false
+    })
   ],
   providers: [],
   bootstrap: [AppComponent]

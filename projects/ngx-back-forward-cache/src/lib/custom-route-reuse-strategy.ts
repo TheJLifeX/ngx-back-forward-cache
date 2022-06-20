@@ -1,6 +1,7 @@
 import { Component, Inject, Injectable, Type } from '@angular/core';
 import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle, ɵEmptyOutletComponent } from '@angular/router';
 import { MemoryCacheMap } from 'memory-cache-map';
+
 /**
  * We use ngx-navigation-trigger (that uses the Angular Location service) because when you use the Angular Router service like this:
     this.router.events.forEach((event) => {
@@ -15,6 +16,7 @@ import { MemoryCacheMap } from 'memory-cache-map';
  * Reason for the error: The Router service depends on RouteReuseStrategy.
  */
 import { NavigationTrigger, NavigationTriggerService } from 'ngx-navigation-trigger';
+
 import { NgxBackForwardCacheConfig } from './ngx-back-forward-cache-config';
 import { NGX_BACK_FORWARD_CACHE_INJECTION_TOKEN } from './ngx-back-forward-cache-injection-token';
 
@@ -90,7 +92,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
       return false;
     }
 
-    // If imperative navigation the component should be created from scratch.
+    // If imperative navigation then the component should be created from scratch.
     if (this.navigationTrigger === NavigationTrigger.IMPERATIVE) {
 
       const possibleRouteHandleStoredInThePast = this.storedRouteHandles.get(route.component);
@@ -143,12 +145,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
       return false;
     }
 
-    /**
-     * @todo
-     * Keep in mind I currently store the routeHandle using the component reference.
-     * Please check if everythings work properly when two routes use the same component.
-     */
-    const shouldStore = (route?.data && route.data['disableNgxBackForwardCache']) ? false : true;
+    const shouldStore = (route?.data && route.data['disableNgxBackForwardCache']) ? false : !this.config.disableNgxBackForwardCache;
     return shouldStore;
   }
 
