@@ -1,6 +1,19 @@
 import { Component, Inject, Injectable, Type } from '@angular/core';
-import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle } from '@angular/router';
+import { RouteReuseStrategy, ActivatedRouteSnapshot, DetachedRouteHandle, ɵEmptyOutletComponent } from '@angular/router';
 import { MemoryCacheMap } from 'memory-cache-map';
+/**
+ * We use ngx-navigation-trigger (that uses the Angular Location service) because when you use the Angular Router service like this:
+    this.router.events.forEach((event) => {
+      if (event instanceof NavigationStart) {
+        if (event.navigationTrigger === 'popstate') {
+          // Do something here
+        }
+      }
+    });
+ * 
+ * You get the following error: "Circular dependency in DI detected for Router"
+ * Reason for the error: The Router service depends on RouteReuseStrategy.
+ */
 import { NavigationTrigger, NavigationTriggerService } from 'ngx-navigation-trigger';
 import { NgxBackForwardCacheConfig } from './ngx-back-forward-cache-config';
 import { NGX_BACK_FORWARD_CACHE_INJECTION_TOKEN } from './ngx-back-forward-cache-injection-token';
@@ -14,9 +27,7 @@ import { NGX_BACK_FORWARD_CACHE_INJECTION_TOKEN } from './ngx-back-forward-cache
 @Injectable()
 export class CustomRouteReuseStrategy implements RouteReuseStrategy {
 
-  private readonly storedRouteHandles: MemoryCacheMap<Type<Component>, DetachedRouteHandle>;
-
-  private readonly whenShouldStoredRouteHandlesBeRestored: Set<NavigationTrigger> = new Set();
+  private readonly storedRouteHandles: MemoryCacheMap<string | Type<Component>, DetachedRouteHandle>;
 
   /**
    * Navigation trigger monitoring.
@@ -29,20 +40,12 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
   ) {
     this.storedRouteHandles = new MemoryCacheMap(
       {
-        timeToLive: config.timeToLive!
-        /**
-          * @todo: A way to destroy the component (by calling destroyDetachedRouteHandle) after the "time to live" is needed here.
-          * PS: Keep in mind that reattached components schould not be destroyed.
-         */
+        maxSize: this.config.maximumNumberOfCachedPages,
+        beforeDeleted: ({ value }) => {
+          this.destroyDetachedRouteHandle(value);
+        }
       }
     );
-
-    if (config.backward) {
-      this.whenShouldStoredRouteHandlesBeRestored.add(NavigationTrigger.BACKWARD);
-    }
-    if (config.forward) {
-      this.whenShouldStoredRouteHandlesBeRestored.add(NavigationTrigger.FORWARD);
-    }
 
     this.navigationTriggerService.eventUrlChanged.subscribe((navigationTrigger) => {
       this.navigationTrigger = navigationTrigger;
@@ -67,20 +70,38 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
    * If this method returns `true` then `retrieve` method will be called, otherwise the component will be created from scratch.
    */
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    if (route.routeConfig?.loadChildren) {
+    /**
+     * Can not retrieve route that has no component linked to it.
+     * 
+     * For example:
+     * app-routing.module.ts
+     * { path: 'page-a', loadChildren: () => import('./page-a/page-a.module').then(m => m.PageAModule) } // ***Here: This route can not be retrieved***
+     * page-a-routing.module.ts
+     * { path: '', component: PageAComponent }{ path: '', component: PageAComponent } // This route can be retrieved.
+     */
+    if (!route.component) {
       return false;
     }
 
-    if (this.navigationTrigger && !this.whenShouldStoredRouteHandlesBeRestored.has(this.navigationTrigger)) {
-      const previousStoredRouteHandle = this.storedRouteHandles.get(route.component as Type<Component>);
-      if (previousStoredRouteHandle) {
-        this.destroyDetachedRouteHandle(previousStoredRouteHandle);
-        this.storedRouteHandles.delete(route.component as Type<Component>);
+    /**
+     * The EmptyOutletComponent created by Angular is never stored (see shouldDetach method).
+     */
+    if (route.component === ɵEmptyOutletComponent) {
+      return false;
+    }
+
+    // If imperative navigation the component should be created from scratch.
+    if (this.navigationTrigger === NavigationTrigger.IMPERATIVE) {
+
+      const possibleRouteHandleStoredInThePast = this.storedRouteHandles.get(route.component);
+      if (possibleRouteHandleStoredInThePast) {
+        this.storedRouteHandles.delete(route.component);
       }
+
       return false;
     }
 
-    const exists = this.storedRouteHandles.has(route.component as Type<Component>);
+    const exists = this.storedRouteHandles.has(route.component);
     return exists;
   }
 
@@ -91,7 +112,7 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
    * It is our responsibility to implement it.
    */
   retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
-    const handle = this.storedRouteHandles.get(route.component as Type<Component>)!;
+    const handle = this.storedRouteHandles.get(route.component!)!;
     return handle;
   }
 
@@ -101,24 +122,34 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
    * If it returns `false` the component (DetachedRouteHandle) is normally destroyed by Angular (ngOnDestroy).
    */
   shouldDetach(route: ActivatedRouteSnapshot): boolean {
-    if (this.config.backward === false && this.config.forward === false) {
+    /**
+     * Can not store route that has no component linked to it.
+     * 
+     * For example:
+     * app-routing.module.ts
+     * { path: 'page-a', loadChildren: () => import('./page-a/page-a.module').then(m => m.PageAModule) } // ***Here: This route should/can not be stored***
+     * page-a-routing.module.ts
+     * { path: '', component: PageAComponent }{ path: '', component: PageAComponent } // This route will be stored.
+     */
+    if (!route.component) {
       return false;
     }
 
-    // This is to avoid to store unnecessary DetachedRouteHandle.
-    if ((this.config.forward === false && this.navigationTrigger === NavigationTrigger.BACKWARD)
-      || (this.config.backward === false && this.navigationTrigger === NavigationTrigger.FORWARD)) {
-      // Delete stored DetachedRouteHandle when it exists (since it will be normally destroyed by Angular).
-      // Else you can get sometimes the following error: "Cannot insert a destroyed View in a ViewContainer!"
-      this.storedRouteHandles.delete(route.component as Type<Component>);
+    /**
+     * Never store the EmptyOutletComponent created by Angular. Else when user navigates to a secondary router outlet for example: /page-a(secondary:page-overlay-a) then back to /page-a the router-outlet component is never destroyed.
+     * For example an empty blank sidenav stays on the page even the url has already changed.
+     */
+    if (route.component === ɵEmptyOutletComponent) {
       return false;
     }
 
-    // Maybe in future update:
-    // const shouldStore = (route?.routeConfig?.data && route.routeConfig.data['ngxBackForwardCache']) ? true : false;
-    // return shouldStore;
-
-    return true;
+    /**
+     * @todo
+     * Keep in mind I currently store the routeHandle using the component reference.
+     * Please check if everythings work properly when two routes use the same component.
+     */
+    const shouldStore = (route?.data && route.data['disableNgxBackForwardCache']) ? false : true;
+    return shouldStore;
   }
 
   /**
@@ -126,9 +157,10 @@ export class CustomRouteReuseStrategy implements RouteReuseStrategy {
    * What we store here will be used in the retrieve method. It provides the route we are leaving and the RouteHandle
    */
   store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-    if (handle) {
-      this.storedRouteHandles.set(route.component as Type<Component>, handle);
+    if (!handle) {
+      return;
     }
+    this.storedRouteHandles.set(route.component!, handle);
   }
 
   /**

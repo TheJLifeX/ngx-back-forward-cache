@@ -1,34 +1,13 @@
 export interface NgxBackForwardCacheConfig {
   /**
-   * ### @deprecated - Will be removed in the next feature (major) update.
-   * 
-   * Restore cached components on backward navigation (e.g. user clicks on browser back-button).
+   * Maximum number of cached pages.
+   * When the maximum number of cached pages is reached the oldest cached page is removed.
    * 
    * @default
-   * true
+   * undefined // Meaning no limit.
    */
-  backward?: boolean;
-
+  maximumNumberOfCachedPages?: number;
   /**
-   * ### @deprecated - Will be removed in the next feature (major) update.
-   * 
-   * Restore cached components on forward navigation (e.g. user clicks on browser forward-button).
-   * 
-   * @default
-   * false
+   * @todo a config for the define all route saved per default or not
    */
-  forward?: boolean;
-
-  /**
-   * ### @deprecated - Will be removed in the next feature (major) update.
-   * 
-   * Time to live of the cached components. Value in milliseconds.
-   * 
-   * @default
-   * Infinity // Which means cached components are never cleaned from the memory until the browser tab is closed.
-   * 
-   * @example
-   * 10 * 60 * 1000 // 10 minutes
-   */
-  timeToLive?: number;
 }
