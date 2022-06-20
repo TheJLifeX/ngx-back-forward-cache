@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
-import { Subject, takeUntil } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import { DemoApiService } from '../demo-api.service';
 
 @Component({
@@ -7,7 +8,7 @@ import { DemoApiService } from '../demo-api.service';
   templateUrl: './page-c.component.html',
   styleUrls: ['./page-c.component.scss']
 })
-export class PageCComponent implements OnInit {
+export class PageCComponent implements OnInit, OnDestroy {
 
   loading!: boolean;
   items!: string[];

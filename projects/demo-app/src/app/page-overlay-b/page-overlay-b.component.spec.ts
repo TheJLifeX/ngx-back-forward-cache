@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ChildPageAComponent } from './child-page-a.component';
+import { PageOverlayBComponent } from './page-overlay-b.component';
 
-describe('ChildPageAComponent', () => {
-  let component: ChildPageAComponent;
-  let fixture: ComponentFixture<ChildPageAComponent>;
+describe('PageOverlayBComponent', () => {
+  let component: PageOverlayBComponent;
+  let fixture: ComponentFixture<PageOverlayBComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ ChildPageAComponent ]
+      declarations: [ PageOverlayBComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(ChildPageAComponent);
+    fixture = TestBed.createComponent(PageOverlayBComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

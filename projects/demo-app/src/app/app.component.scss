@@ -1,10 +1,10 @@
 :host {
   display: block;
   font-size: 18px;
-  padding: 50px 0px 0px 0px;
+  padding: 250px 0px 0px 0px;
 }
 
-.nav {
+header {
   position: fixed;
   top: 0px;
   left: 0px;
@@ -21,4 +21,19 @@
 .nav__item--active {
   color: #1976d2;
   font-size: 1.5rem;
+}
+
+.nav__item--secondary {
+  border-left: 1px solid #cccccc;
+  padding-left: 1rem;
+}
+
+.secondary-router-outlet-container {
+  background-color: #fafafa;
+  border-left: 1px solid #cccccc;
+  bottom: 0px;
+  position: fixed;
+  right: 0px;
+  top: 0px;
+  width: 90%;
 }

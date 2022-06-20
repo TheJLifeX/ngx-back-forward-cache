@@ -8,9 +8,13 @@ import { Title } from '@angular/platform-browser';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
+
+  secondaryRouterOutletContainer: boolean = false;
+
   links: string[] = [
     '/page-a',
     '/page-b',
+    '/page-b/second-b',
     '/page-c'
   ];
 
@@ -23,5 +27,15 @@ export class AppComponent implements OnInit {
     this.locationService.onUrlChange((url) => {
       this.titleService.setTitle(`${url} - Demo app`);
     });
+  }
+
+  onEventActivateSecondaryRouterOutlet(event: any): void {
+    console.log('onEventActivateSecondaryRouterOutlet - event', event);
+    this.secondaryRouterOutletContainer = true;
+  }
+
+  onEventDeactivateSecondaryRouterOutlet(event: any): void {
+    console.log('onEventDeactivateSecondaryRouterOutlet - event', event);
+    this.secondaryRouterOutletContainer = false;
   }
 }

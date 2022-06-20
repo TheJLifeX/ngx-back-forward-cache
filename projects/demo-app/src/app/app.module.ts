@@ -12,11 +12,7 @@ import { AppComponent } from './app.component';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    NgxBackForwardCacheModule.forRoot({
-      backward: true,
-      forward: false,
-      timeToLive: 10 * 60 * 1000 // 10 minutes
-    })
+    NgxBackForwardCacheModule.forRoot()
   ],
   providers: [],
   bootstrap: [AppComponent]

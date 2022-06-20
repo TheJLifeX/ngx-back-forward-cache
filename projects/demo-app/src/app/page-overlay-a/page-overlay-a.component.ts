@@ -1,14 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { DemoApiService } from '../demo-api.service';
 
 @Component({
-  selector: 'app-page-a',
-  templateUrl: './page-a.component.html',
-  styleUrls: ['./page-a.component.scss']
+  selector: 'app-page-overlay-a',
+  templateUrl: './page-overlay-a.component.html',
+  styleUrls: ['./page-overlay-a.component.scss']
 })
-export class PageAComponent implements OnInit {
+export class PageOverlayAComponent implements OnInit, OnDestroy {
 
   loading!: boolean;
   items!: string[];
@@ -19,9 +19,9 @@ export class PageAComponent implements OnInit {
 
   ngOnInit(): void {
     this.loading = true;
-    this.demoApiService.getData('Page A').pipe(
+    this.demoApiService.getData('Page Overlay A').pipe(
       takeUntil(this.componentDestroyed$)
-    ).subscribe((items) => {
+    ).subscribe(items => {
       this.items = items;
       this.loading = false;
     });
