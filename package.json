@@ -18,7 +18,7 @@
     "@angular/platform-browser": "~13.1.0",
     "@angular/platform-browser-dynamic": "~13.1.0",
     "@angular/router": "~13.1.0",
-    "memory-cache-map": "^1.1.0",
+    "memory-cache-map": "^1.1.1",
     "ngx-navigation-trigger": "^0.1.2",
     "rxjs": "~7.4.0",
     "tslib": "^2.3.0",
