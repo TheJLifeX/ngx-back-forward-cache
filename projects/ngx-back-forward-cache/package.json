@@ -2,13 +2,13 @@
   "name": "ngx-back-forward-cache",
   "version": "1.0.0-beta.1",
   "peerDependencies": {
-    "@angular/common": "^13.1.0",
-    "@angular/core": "^13.1.0"
+    "@angular/common": ">=12",
+    "@angular/core": ">=12"
   },
   "dependencies": {
     "tslib": "^2.3.0",
-    "memory-cache-map": "^1.1.0-1",
-    "ngx-navigation-trigger": "^0.1.0"
+    "memory-cache-map": "^1.1.0",
+    "ngx-navigation-trigger": "^0.1.2"
   },
   "description": "Back/forward cache in Angular.",
   "keywords": [
@@ -16,7 +16,8 @@
     "backward",
     "forward",
     "component",
-    "angular"
+    "angular",
+    "route reuse strategy"
   ],
   "homepage": "https://github.com/TheJLifeX/ngx-back-forward-cache#readme",
   "bugs": {

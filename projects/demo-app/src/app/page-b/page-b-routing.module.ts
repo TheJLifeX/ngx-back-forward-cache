@@ -19,7 +19,7 @@ const routes: Routes = [
     ]
   },
   {
-    path: 'second-b', component: PageBComponent
+    path: 'same-component', component: PageBComponent
   }
 ];
 

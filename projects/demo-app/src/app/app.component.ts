@@ -14,7 +14,7 @@ export class AppComponent implements OnInit {
   links: string[] = [
     '/page-a',
     '/page-b',
-    '/page-b/second-b',
+    '/page-b/same-component',
     '/page-c'
   ];
 

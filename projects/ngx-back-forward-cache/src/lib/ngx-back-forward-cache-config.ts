@@ -9,7 +9,7 @@ export interface NgxBackForwardCacheConfig {
   maximumNumberOfCachedPages?: number;
 
   /**
-   * Define if ngx-back-forward-cache is disabled or not for all routes per default.
+   * Define globally if ngx-back-forward-cache is disabled or not for all routes per default.
    * 
    * 
    * PS: You can specify for each route individually if ngx-back-forward-cache is disabled or not.
