@@ -1,6 +1,6 @@
 {
   "name": "ngx-back-forward-cache",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "dev--ngx-back-forward-cache": "ng build ngx-back-forward-cache --watch",
     "dev--demo-app": "ng serve demo-app --open",
